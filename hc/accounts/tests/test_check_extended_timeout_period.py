@@ -10,15 +10,16 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.check.save()
 
     def test_it_works(self):
-        """ test that the new extended timeouts actually resgister"""
-
+        """ test that the new extended timeouts actually resgister """
+        
+        period = 5184000
         url = "/checks/%s/timeout/" % self.check.code
-        payload = {"timeout": 5184000, "grace": 5184000}
+        payload = {"timeout": period , "grace": period}
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(url, data=payload)
-        self.assertRedirects(r, "/checks/")
+        test = self.client.post(url, data=payload)
+        self.assertRedirects(test, "/checks/")
 
         check = Check.objects.get(code=self.check.code)
-        assert check.timeout.total_seconds() == 5184000
-        assert check.grace.total_seconds() == 5184000
+        assert check.timeout.total_seconds() == period
+        assert check.grace.total_seconds() == period

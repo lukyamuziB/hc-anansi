@@ -30,6 +30,16 @@ $(function () {
 
         return result;
     }
+
+    //global scale values
+    durationA = 60
+    durationB = 1800
+    durationC = 3600
+    durationD = 43200
+    durationE = 86400
+    durationF = 604800
+    durationG = 2592000
+    durationH = 5184000
     
     //function that constructs the slider for period timeouts
     var periodSlider = document.getElementById("period-slider");
@@ -37,15 +47,16 @@ $(function () {
         start: [20],
         connect: "lower",
         range: {
-            'min': [60, 60],
-            '33%': [3600, 3600],
-            '66%': [86400, 86400],
-            '72%': [604800, 604800],
-            'max': 5184000,
+            'min': [durationA, durationA],
+            '33%': [durationC, durationC],
+            '66%': [durationE, durationE],
+            '72%': [durationF, durationF],
+            'max': durationH,
         },
         pips: {
             mode: 'values',
-            values: [60, 1800, 3600, 43200, 86400, 2592000, 5184000],
+            values: [durationA, durationB, durationC, durationD,
+                     durationE, durationG, durationH],
             density: 4,
             format: {
                 to: secsToText, 
@@ -66,15 +77,16 @@ $(function () {
         start: [20],
         connect: "lower",
         range: {
-            'min': [60, 60],
-            '33%': [3600, 3600],
-            '66%': [86400, 86400],
-            '72%': [604800, 604800],
-            'max': 5184000,
+            'min': [durationA, durationA],
+            '33%': [durationC, durationC],
+            '66%': [durationE, durationE],
+            '72%': [durationF, durationF],
+            'max': durationH,
         },
         pips: {
             mode: 'values',
-            values: [60, 1800, 3600, 43200, 86400, 2592000, 5184000],
+            values: [durationA, durationB, durationC, durationD,
+                     durationE, durationG, durationH],
             density: 4,
             format: {
                 to: secsToText,
