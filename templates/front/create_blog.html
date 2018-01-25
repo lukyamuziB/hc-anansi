@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block blog_head %}
+
+{{ form.media }}
+
+{% endblock %}
+{% block title %}blog{% endblock %}
+
+{% block content %}
+<div class="col-sm-6 col-sm-offset-3">
+  
+    <form method="POST"> {% csrf_token %}
+        <label for="category">Select category:</label><br>
+        <select id="category" name="category_name" class="form-control">
+          {% for category in category %}
+          <option value="{{ category.name }}"> {{ category.name }} </option>
+          {% endfor %}
+        </select>
+           
+        <br>
+        {{ form }}
+        <button type="submit" name="create_blog" class="btn btn-default">Create Blog</button>
+    </form>
+</div>
+    <br>
+      <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModalNorm">
+        add
+        </button>
+        <div class="modal fade" id="myModalNorm" tabindex="-1" role="dialog" 
+             aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" 
+                           data-dismiss="modal">
+                               <span aria-hidden="true">&times;</span>
+                               <span class="sr-only">Close</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">
+                            Create a new Category
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST"> {% csrf_token %}
+                        {{  category_form }}
+                         <br>
+                          <button type="submit" name="new_category"  class="btn btn-default">Create</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default"
+                                data-dismiss="modal">
+                                    Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}
