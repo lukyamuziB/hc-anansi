@@ -3,6 +3,7 @@ from datetime import timedelta as td
 from itertools import tee
 
 import requests
+from django.http import HttpResponse
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -17,7 +18,8 @@ from hc.api.decorators import uuid_or_400
 from hc.api.models import DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check, Ping
 from hc.front.forms import (AddChannelForm, AddWebhookForm, NameTagsForm,
                             TimeoutForm)
-
+from .forms import CreateBlogPost, CreateCategory
+from .models import Category, Blog_post
 
 # from itertools recipes:
 def pairwise(iterable):
@@ -26,6 +28,50 @@ def pairwise(iterable):
     next(b, None)
     return zip(a, b)
 
+
+def blogs(request):
+    stories = Blog_post.objects.all()
+    return render(request, "front/blog_posts.html")
+
+
+def create_blog(request):
+    form = CreateBlogPost(request.POST)
+    category_form = CreateCategory(request.POST)
+    
+    # if request == "POST":
+    if "new_category" in request.POST:
+        if category_form.is_valid():
+            name = category_form.cleaned_data['category']
+            print(name)
+            print("jdhbbvhbvhbsdbh")
+            ctg = Category(name = name)
+            ctg.save()
+
+    elif "create_blog" in request.POST:
+        if form.is_valid():
+            title = form.cleaned_data['title']
+            blog = form.cleaned_data['content']
+            selected_category = request.POST['category_name']
+            print(title, blog, selected_category)
+            category = Category.objects.get(name=selected_category)
+            blog = Blog_post(title = title, content = blog, category = category)
+            blog.save()
+            return redirect(read_blog)
+    
+
+    categories = Category.objects.all()
+    ctx = {
+        'category':categories,
+        'form':form,
+        'category_form':category_form
+          }
+    return render(request, "front/create_blog.html", ctx)
+
+def read_blog(request):
+    ctx = {
+        "blog": 909
+    }
+    return render(request, "front/test.html", ctx )
 
 @login_required
 def my_checks(request):
