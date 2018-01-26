@@ -22,6 +22,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['0.0.0.0', 'localhost', 'hc-anansi-staging.herokuapp.com',
                  'hc-anansi-production.herokuapp.com',
                  'hc-ibutiti.herokuapp.com',
+                 'hc-anansi-blog.herokuapp.com',
                  '127.0.0.1']
 DEFAULT_FROM_EMAIL = 'hc-anansi@null.net'
 USE_PAYMENTS = False
@@ -134,7 +135,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-SITE_ROOT = "http://localhost:8000"
+SITE_ROOT = "hc-anansi-blog.herokuapp.com/" # http://localhost:8000
 PING_ENDPOINT = SITE_ROOT + "/ping/"
 PING_EMAIL_DOMAIN = HOST
 STATIC_URL = '/static/'
