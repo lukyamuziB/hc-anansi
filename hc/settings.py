@@ -19,9 +19,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HOST = "localhost"
 SECRET_KEY = "---"
 DEBUG = True
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost', 'hc-anansi-staging.herokuapp.com',
-                 'hc-anansi-production.herokuapp.com',
-                 'hc-ibutiti.herokuapp.com',
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost',
                  'hc-anansi-blog.herokuapp.com',
                  '127.0.0.1']
 DEFAULT_FROM_EMAIL = 'hc-anansi@null.net'
