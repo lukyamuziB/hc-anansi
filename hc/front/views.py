@@ -29,36 +29,45 @@ def pairwise(iterable):
     return zip(a, b)
 
 
-def blogs(request):
-    stories = Blog_post.objects.all()
-    return render(request, "front/blog_posts.html")
+def blogs(request, filter_by):
+   
+    num = 3
+    category = Category.objects.all()
+    if int(filter_by) > 0:
+        category_id = Category.objects.get(pk=filter_by).id
+        stories = Blog_post.objects.filter(category=category_id)
+    else:
+        stories = Blog_post.objects.all()
+    list_of_stories = [story for story in stories]
+    blogs = [list_of_stories[i:i+num] for i in range(0, len(list_of_stories), num)]
+    ctx = {
+        'category':category,
+        'blogs':blogs
+    }
+    return render(request, "front/blog_posts.html", ctx)
 
 
+@login_required
 def create_blog(request):
     form = CreateBlogPost(request.POST)
     category_form = CreateCategory(request.POST)
-    
-    # if request == "POST":
     if "new_category" in request.POST:
         if category_form.is_valid():
             name = category_form.cleaned_data['category']
-            print(name)
-            print("jdhbbvhbvhbsdbh")
             ctg = Category(name = name)
             ctg.save()
-
     elif "create_blog" in request.POST:
         if form.is_valid():
             title = form.cleaned_data['title']
             blog = form.cleaned_data['content']
             selected_category = request.POST['category_name']
-            print(title, blog, selected_category)
             category = Category.objects.get(name=selected_category)
-            blog = Blog_post(title = title, content = blog, category = category)
+            published = timezone.now()
+            user = request.user
+            blog = Blog_post(title=title, content=blog, category=category,
+                             published=published, user=user)
             blog.save()
-            return redirect(read_blog)
-    
-
+            return redirect(read_blog, pk=blog.id)
     categories = Category.objects.all()
     ctx = {
         'category':categories,
@@ -67,11 +76,16 @@ def create_blog(request):
           }
     return render(request, "front/create_blog.html", ctx)
 
-def read_blog(request):
+
+def read_blog(request, pk):
+    blog = Blog_post.objects.get(pk=pk)
+    featured = Blog_post.objects.get(pk=1)
     ctx = {
-        "blog": 909
+        "blog": blog,
+        'featured':featured
     }
-    return render(request, "front/test.html", ctx )
+    return render(request, "front/readblog.html", ctx )
+
 
 @login_required
 def my_checks(request):

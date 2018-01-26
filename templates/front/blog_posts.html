@@ -2,45 +2,44 @@
 {% load staticfiles %}
 
 {% block content %}
-
-
 <div class="container">
-        <!-- Example row of columns -->
-        <div class="row">
-          <div class="col-md-4">
-                <div class="card" style="width: 18rem;">
-                        <img class="card-img-top img-responsive" src="https://slack-files2.s3-us-west-2.amazonaws.com/avatars/2016-07-07/57802419554_47decd25da0b63135665_512.png" alt="Card image cap">
-                        <div class="card-body">
-                          <strong></strong><h5 class="card-title">Card title</h5></strong>
-                          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                          <a href="#" class="btn btn-primary">Read more</a>
-                        </div>
-                      </div>
-    
-          </div>
-          <div class="col-md-4">
-                <div class="card" style="width: 18rem;">
-                        <img class="card-img-top img-responsive" src="https://slack-files2.s3-us-west-2.amazonaws.com/avatars/2016-07-07/57802419554_47decd25da0b63135665_512.png" alt="Card image cap">
-                        <div class="card-body">
-                          <h5 class="card-title">Card title</h5>
-                          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                          <a href="#" class="btn btn-primary">Read more</a>
-                        </div>
-                      </div>
-           
-         </div>
-          <div class="col-md-4">
-                <div class="card" style="width: 18rem;">
-                        <img class="img-responsive" src="https://slack-files2.s3-us-west-2.amazonaws.com/avatars/2016-07-07/57802419554_47decd25da0b63135665_512.png" alt="Card image cap">
-                        <div class="card-body">
-                          <h5 class="card-title">Card title</h5>
-                          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                          <a href="#" class="btn btn-primary">Read more</a>
-                        </div>
-                      </div>
-    
-          </div>
+    <div>
+        <div class="container">
+            <ul class="nav nav-tabs">
+                <li role="presentation" class="active"><a href="#">Home</a></li>
+                {% if request.user.is_authenticated %}
+                <li role="presentation"><a href="{% url 'hc-create_blog' %}">Create Blog</a></li>
+                {% endif %}
+                <li role="presentation"><a href="#">Feed back</a></li>
+                <li role="presentation" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                          Filter by Category <span class="caret"></span> </a>
+                <ul class="dropdown-menu">
+                   {% for category in category %}
+                       
+                      <li role="presentation"><a href="{% url 'hc-blog' filter_by=category.id %}">{{ category }}</a></li>
+                   {% endfor %}
+                 </ul>
+                </li>
+            </ul>
+        </div>        
+    </div>
+{% for stories in blogs %}
+<div class="row">
+        {% for story in stories %}
+        <div class="col-md-4">
+           <div class="card" style="width: 18rem;">
+                <img class="card-img-top img-responsive" src="https://slack-files2.s3-us-west-2.amazonaws.com/avatars/2016-07-07/57802419554_47decd25da0b63135665_512.png" alt="Card image cap">
+                   <div class="card-body">
+                   <h5 class="card-title"> {{ story.title }} </h5>
+                   <p class="card-text"> {{ story.content | truncatechars:120 }} </p>
+                   <a href=" {% url 'hc-read_blog' pk=story.id %} " class="btn btn-primary">Read more</a>
+                </div>
+           </div>
         </div>
+        {% endfor %}
+</div>
+        {% endfor %}
 </div>
 {% endblock %}
 
