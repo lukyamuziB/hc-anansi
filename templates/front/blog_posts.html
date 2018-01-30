@@ -6,7 +6,7 @@
     <div>
         <div class="container">
             <ul class="nav nav-tabs">
-                <li role="presentation" class="active"><a href="#">Home</a></li>
+                <li role="presentation" class="active"><a href="{% url 'hc-blog' filter_by=0 %}">Home</a></li>
                 {% if request.user.is_authenticated %}
                 <li role="presentation"><a href="{% url 'hc-create_blog' %}">Create Blog</a></li>
                 {% endif %}
@@ -41,5 +41,6 @@
 </div>
         {% endfor %}
 </div>
+
 {% endblock %}
 

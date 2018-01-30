@@ -30,14 +30,13 @@ def pairwise(iterable):
 
 
 def blogs(request, filter_by):
-   
-    num = 3
     category = Category.objects.all()
     if int(filter_by) > 0:
         category_id = Category.objects.get(pk=filter_by).id
         stories = Blog_post.objects.filter(category=category_id)
     else:
         stories = Blog_post.objects.all()
+    num = 3
     list_of_stories = [story for story in stories]
     blogs = [list_of_stories[i:i+num] for i in range(0, len(list_of_stories), num)]
     ctx = {

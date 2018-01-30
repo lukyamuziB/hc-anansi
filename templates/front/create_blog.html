@@ -10,22 +10,30 @@
 
 {% block content %}
 <div class="col-sm-6 col-sm-offset-3">
+        <span class="glyphicon glyphicon-home"></span>
   
     <form method="POST"> {% csrf_token %}
-        <label for="category">Select category:</label><br>
-        <select id="category" name="category_name" class="form-control">
-          {% for category in category %}
-          <option value="{{ category.name }}"> {{ category.name }} </option>
-          {% endfor %}
-        </select>
-           
-        <br>
-        {{ form }}
-        <button type="submit" name="create_blog" class="btn btn-default">Create Blog</button>
+        <div class="form-group">
+            <!-- <div class="form-inline"> -->
+                <div class="form-group">
+                        <!-- <label for="category">Select category:</label><br> -->
+                        <option value="" disabled selected>Select a Category</option>
+                        <select id="category" name="category_name" class="form-control" placeholder="select">
+                          {% for category in category %}
+                          <option value="{{ category.name }}"> {{ category.name }} </option>
+                          {% endfor %}
+                        </select>
+                </div>
+            <!-- </div>    -->
+                <br>
+                {{ form }}
+                <button type="submit" name="create_blog" class="btn btn-default">Create Blog</button>
+        </div>
+
     </form>
 </div>
     <br>
-      <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModalNorm">
+      <button class="btn btn-primary" data-toggle="modal" data-target="#myModalNorm">
         add
         </button>
         <div class="modal fade" id="myModalNorm" tabindex="-1" role="dialog" 
