@@ -9,6 +9,21 @@
 {% block title %}blog{% endblock %}
 
 {% block content %}
+<div class="container">
+    <div>
+        <div class="container">
+            <ul class="nav nav-tabs">
+                <li role="presentation"><a href="{% url 'hc-blog' filter_by=0%}">Home</a></li>
+                {% if request.user.is_authenticated %}
+                <li role="presentation" class="active"><a href="#">Create Blog</a></li>
+                {% endif %}
+                <li role="presentation" class="dropdown">
+                </li>
+            </ul>
+        </div>        
+    </div>
+</div><br>
+
 <div class="col-sm-6 col-sm-offset-3">
   
     <form method="POST"> {% csrf_token %}
@@ -17,16 +32,16 @@
           {% for category in category %}
           <option value="{{ category.name }}"> {{ category.name }} </option>
           {% endfor %}
-        </select>
-           
-        <br>
+        </select><br>
+        <label for="title">Title:</label><br>
+        <input type="text" name="title" class="form-control myfieldclass" placeholder="Blog Title" required="" id="id_title"><br>
         {{ form }}
-        <button type="submit" name="create_blog" class="btn btn-default">Create Blog</button>
+        <button type="submit" name="create_blog" class="submit-blog btn btn-default">Create Blog</button>
     </form>
 </div>
     <br>
-      <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModalNorm">
-        add
+      <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModalNorm", style="padding: 9px;">
+        ADD
         </button>
         <div class="modal fade" id="myModalNorm" tabindex="-1" role="dialog" 
              aria-labelledby="myModalLabel" aria-hidden="true">

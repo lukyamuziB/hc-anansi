@@ -135,7 +135,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-SITE_ROOT = "hc-anansi-blog.herokuapp.com/" # http://localhost:8000
+SITE_ROOT = "http://localhost:8000" # "hc-anansi-blog.herokuapp.com/"
 PING_ENDPOINT = SITE_ROOT + "/ping/"
 PING_EMAIL_DOMAIN = HOST
 STATIC_URL = '/static/'

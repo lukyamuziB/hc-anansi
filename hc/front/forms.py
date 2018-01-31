@@ -47,16 +47,17 @@ class AddWebhookForm(forms.Form):
     def get_value(self):
         return "{value_down}\n{value_up}".format(**self.cleaned_data)
 
-
 class CreateBlogPost(forms.Form):
-        title = forms.CharField(widget = forms.TextInput(attrs = {
-        'class':'form-control',
-        'placeholder':'Blog Title'
-           }))
-        content = forms.CharField(widget = PagedownWidget)
+    content = forms.CharField(widget = PagedownWidget)
 
 class CreateCategory(forms.Form):
     category = forms.CharField(widget = forms.TextInput(attrs = {
+        'class':'form-control',
+        'placeholder':'category name'
+           }))
+
+class CreateCommentForm(forms.Form):
+    comment = forms.CharField(widget = forms.TextInput(attrs = {
         'class':'form-control',
         'placeholder':'category name'
            }))

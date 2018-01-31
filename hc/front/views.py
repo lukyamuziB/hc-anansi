@@ -18,8 +18,8 @@ from hc.api.decorators import uuid_or_400
 from hc.api.models import DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check, Ping
 from hc.front.forms import (AddChannelForm, AddWebhookForm, NameTagsForm,
                             TimeoutForm)
-from .forms import CreateBlogPost, CreateCategory
-from .models import Category, Blog_post
+from .forms import CreateBlogPost, CreateCategory, CreateCommentForm
+from .models import Category, Blog_post, Comment
 
 # from itertools recipes:
 def pairwise(iterable):
@@ -58,7 +58,7 @@ def create_blog(request):
             ctg.save()
     elif "create_blog" in request.POST:
         if form.is_valid():
-            title = form.cleaned_data['title']
+            title = request.POST['title']
             blog = form.cleaned_data['content']
             selected_category = request.POST['category_name']
             category = Category.objects.get(name=selected_category)
@@ -78,13 +78,28 @@ def create_blog(request):
 
 
 def read_blog(request, pk):
+    comment_form = CreateCommentForm(request.POST)
     blog = Blog_post.objects.get(pk=pk)
     featured = Blog_post.objects.get(pk=1)
+    comments = Comment.objects.filter(blog = blog.id)
+    url = f"http://localhost:8000/blog/read_blog/{pk}"
     ctx = {
         "blog": blog,
-        'featured':featured
+        'featured':featured,
+        'tweet_url':url,
+        'comments':comments
     }
+    if "add_comment" in request.POST:
+        if comment_form.is_valid():
+            posted_comment = request.POST['comment']
+            published = timezone.now()
+            comment = Comment(comment = posted_comment, blog = blog, user = request.user, published=published)
+            comment.save()
+            return redirect(read_blog, pk=blog.id)
     return render(request, "front/readblog.html", ctx )
+
+def home(request):
+    return redirect(blogs)
 
 
 @login_required

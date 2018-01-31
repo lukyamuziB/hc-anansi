@@ -1,12 +1,24 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 
-
 {% block title %}Read-blog | Healthchecks{% endblock %}
 
-
 {% block content %}
-
+<div class="container">
+        <div>
+            <div class="container">
+                <ul class="nav nav-tabs">
+                    <li role="presentation"><a href="{% url 'hc-blog' filter_by=0%}">Home</a></li>
+                    {% if request.user.is_authenticated %}
+                    <li role="presentation"><a href="{% url 'hc-create_blog' %}">Create Blog</a></li>
+                    {% endif %}
+                    <li role="presentation" class="active"><a href="{% url 'hc-blog' filter_by=0%}">Read Blog</a></li>
+                    <li role="presentation" class="dropdown">
+                    </li>
+                </ul>
+            </div>        
+        </div>
+</div>
 <main role="main" class="container">
 <div class="row">
     <div class="col-md-8 blog-main">
@@ -14,37 +26,57 @@
             From Health Checks
         </h3>
         <div class="blog-post">
-            <h2 class="blog-post-title"> {{ blog.title }} </h2>
-            <p class="blog-post-meta">{{ blog.published }} by <a href="#">{{ blog.user.email }}</a></p>
+            <h2 class="blog-post-title" style="font-weight:bold; font-size:35px; font-family:'Abel',sans-serif;"> {{ blog.title }}</h2>
+            <p class="blog-post-meta">{{ blog.published }} by <a href="#">{{ blog.user.email }}</a>
+                <i class="fa fa-edit" style="font-size:24px"></i>
+                <i class="fa fa-trash" style="font-size:24px"></i>
+            </p>
         </div>
         <div class="markdown">
             {{ blog.content }}
+        </div><br>
+        
+        {% if request.user.is_authenticated %}
+        <form method="POST"> {% csrf_token %}
+        <label for="title" style="font-family:'Abel',sans-serif;">Comments:</label><br>
+        <input type="text" name="comment" class="form-control myfieldclass" placeholder="Add Comment" id="comment"><br>
+        <button class="btn btn-primary btn-sm" name="add_comment" style="padding: 5px;">ADD</button>
+        </form>
+        {% endif %}
+
+        {% for comment in comments %}   
+        <div class="comments">  
+            <div class="comment-header">
+                Comment by {{ comment.user.email }}<br>
+                {{ comment.published }}
+            </div>
+            <div class="comment-body">
+                {{comment.comment}}
+            </div>
         </div>
-    </div>
-    <aside class="col-md-4 blog-sidebar">
-        <div class="p-3 mb-3 bg-light rounded">
-            <!-- <h2 class="font-italic">Get Involved</h2>
-            <p class="mb-0"> Have something to you feel the rest should know!
-                    <br> <strong>Start writting already.</strong>
-                    </p>
-                    <a href="{% url 'hc-create_blog' %}" class="btn btn-primary">Get Started</a> -->
-                    <h4 class="pb-3 mb-4 font-italic border-bottom">Share</h4>
+        {% endfor %}
+        </div>
+        </div>
+</main>
+<aside class="col-md-4 blog-sidebar" align="center">
+    <div>
+    <h4 class="pb-3 mb-4 font-italic border-bottom">Share</h4>
     <a target="_blank"  href="https://twitter.com/intent/tweet?text={{blog.title}}&url={{tweet_url}}&hashtags=HealthChecks" class="fa fa-twitter"></a><br><br>
     <a target="_blank" href="http://www.linkedin.com/shareArticle?url=http://localhost:8000{{ request.get_full_path|urlencode }}&title={{ blog.title }}&summary={{ blog.content }}&source=http://localhost:8000" class="fa fa-linkedin"></a><br><br>
-        </div> 
-        <br><br><br>
-        <div class="p-3">
-            <h3 class="font-italic">Featured article</h3>
-            <div class="card" style="width: 18rem;">
-                            <img class="card-img-top img-responsive" src="https://slack-files2.s3-us-west-2.amazonaws.com/avatars/2016-07-07/57802419554_47decd25da0b63135665_512.png" alt="Card image cap">
-                            <div class="card-body">
-                                <p> hey there am today's featured article </p> <br>
-                            </div>
-                            <a href="{% url 'hc-read_blog' pk=featured.id %}" class="btn btn-primary">Read more</a>
-                        </div>
+    <!-- <a target="_blank" href="https://www.facebook.com/sharer.php?u=http://localhost:8000{{ request.get_full_path|urlencode }}" class="fa fa-facebook"></a><br><br><br> -->
+    <!-- <a target="_blank" href="http://www.slack.com/shareArticle?url=http://localhost:8000{{ request.get_full_path|urlencode }}&title={{ blog.title }}&summary={{ blog.content }}&source=http://localhost:8000" class="fa fa-linkedin"></a><br><br> -->
+
+    <div class=" featured-blog-item">
+        <h3 class="font-italic" style="text-align:center;">Featured article</h3>
+        <img class="card-img-top img-responsive" src="https://slack-files2.s3-us-west-2.amazonaws.com/avatars/2016-07-07/57802419554_47decd25da0b63135665_512.png" alt="Card image cap" style="height:120px; width:120px;">
+        <div class="card-body">
+            <p> {{ featured.content}} </p>
+            <a href="{% url 'hc-read_blog' pk=featured.id %}" class="btn btn-primary">Read more</a>
         </div>
-    </aside>
+    </div>
 </div>
+</aside>
+
 <script
   src="http://code.jquery.com/jquery-1.12.4.min.js"
   integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
@@ -55,10 +87,7 @@
     $(function(){
     $(".markdown").each(function(){
         var blogContent = $(this).text();
-        console.log(markedContent);
         var markedContent = marked(blogContent);
-        console.log('hsfgjkh');
-        console.log(markedContent);
         $(this).html(markedContent);
     });
 });

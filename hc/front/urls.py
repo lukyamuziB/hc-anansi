@@ -32,7 +32,6 @@ blog_urls = [
     url(r'^$', views.blogs, name="hc-blog"),
     url(r'^create_blog$', views.create_blog, name="hc-create_blog"),
     url(r'^read_blog/(?P<pk>\d+)$', views.read_blog, name="hc-read_blog")
-
 ]
 
 urlpatterns = [
@@ -50,6 +49,6 @@ urlpatterns = [
 
     url(r'^blog/', include(blog_urls)),
     url(r'^blog/(?P<filter_by>\d+)/', include(blog_urls)),
-    url(r'^blog/([\w-]+)/', include(blog_urls))
+    url(r'^blog/([\w-]+)/', include(blog_urls)),
 
 ]

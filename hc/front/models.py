@@ -7,6 +7,7 @@ class Category(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+
     
 class Blog_post(models.Model):
     title = models.CharField(max_length=100)
@@ -17,3 +18,13 @@ class Blog_post(models.Model):
 
     def __str__(self):
         return f"{self.title}"
+
+class Comment(models.Model):
+    comment = models.TextField()
+    blog = models.ForeignKey(Blog_post, blank=True, null=True )
+    user = models.ForeignKey(User, blank=True, null=True, on_delete = models.CASCADE)
+    published = models.DateTimeField(null=True, blank=True)
+
+
+    def __str__(self):
+        return f"{self.comment}"
