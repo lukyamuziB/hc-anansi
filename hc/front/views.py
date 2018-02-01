@@ -47,7 +47,6 @@ def blogs(request, filter_by):
     return render(request, "front/blog_posts.html", ctx)
 
 
-@login_required
 def create_blog(request):
     form = CreateBlogPost(request.POST)
     category_form = CreateCategory(request.POST)
@@ -58,7 +57,7 @@ def create_blog(request):
             ctg.save()
     elif "create_blog" in request.POST:
         if form.is_valid():
-            title = request.POST['title']
+            title = request.POST['title'] 
             blog = form.cleaned_data['content']
             selected_category = request.POST['category_name']
             category = Category.objects.get(name=selected_category)
@@ -80,15 +79,17 @@ def create_blog(request):
 def read_blog(request, pk):
     comment_form = CreateCommentForm(request.POST)
     blog = Blog_post.objects.get(pk=pk)
-    featured = Blog_post.objects.get(pk=1)
+    # featured = Blog_post.objects.get(pk=1)
     comments = Comment.objects.filter(blog = blog.id)
     url = f"http://localhost:8000/blog/read_blog/{pk}"
     ctx = {
         "blog": blog,
-        'featured':featured,
+        # 'featured':featured,
         'tweet_url':url,
         'comments':comments
     }
+    print (blog.id)
+    print ("000000")
     if "add_comment" in request.POST:
         if comment_form.is_valid():
             posted_comment = request.POST['comment']
@@ -100,6 +101,17 @@ def read_blog(request, pk):
 
 def home(request):
     return redirect(blogs)
+
+
+def edit_blog(request,pk):
+    pass
+
+def delete_blog(request, pk):
+    if "delete" in request.POST:
+        blog = Blog_post.objects.get(pk=pk)
+        blog.delete()
+        messages.info(request, "Blog deleted!")
+        return redirect(read_blog)
 
 
 @login_required
