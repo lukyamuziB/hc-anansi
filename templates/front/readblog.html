@@ -30,8 +30,8 @@
             <p class="blog-post-meta">{{ blog.published }} by <a href="#">{{ blog.user.email }}</a>
 
             {% if request.user.id == blog.user.id %}    
-            <a href="#"><i class="fa fa-edit" style="font-size:24px"></i></a>
-            <a href="#"><i class="fa fa-trash" name="delete" style="font-size:24px"></i></a>  
+            <a href="{% url 'hc-edit_blog' pk=blog.id %}"><i class="fa fa-edit" style="font-size:24px"></i></a>
+            <a href="{% url 'hc-delete_blog' pk=blog.id %}"><i class="fa fa-trash" name="delete" style="font-size:24px"></i></a>  
             {% endif %}
 
             </p>
@@ -73,22 +73,32 @@
             <h3 class="font-italic" style="text-align:center;">Featured article</h3>
             <img class="card-img-top img-responsive" src="https://slack-files2.s3-us-west-2.amazonaws.com/avatars/2016-07-07/57802419554_47decd25da0b63135665_512.png" alt="Card image cap" style="height:120px; width:120px;">
             <div class="card-body">
-                <p> {{ featured.content}} </p>
+                <p> {{ featured.content | truncatechars:100 }} </p>
                 <a href="{% url 'hc-read_blog' pk=featured.id %}" class="btn btn-primary">Read more</a>
             </div>
         </div>
-    </div>
-    </aside>
-
-    </div>
 </main>
+<!-- 
+<aside class="col-md-4 blog-sidebar" align="center">
+    <div>
+    <h4 class="pb-3 mb-4 font-italic border-bottom">Share</h4>
+    <a target="_blank"  href="https://twitter.com/intent/tweet?text={{blog.title}}&url={{tweet_url}}&hashtags=HealthChecks" class="fa fa-twitter"></a><br><br>
+    <a target="_blank" href="http://www.linkedin.com/shareArticle?url=http://localhost:8000{{ request.get_full_path|urlencode }}&title={{ blog.title }}&summary={{ blog.content }}&source=http://localhost:8000" class="fa fa-linkedin"></a><br><br>
+    <div class=" featured-blog-item">
+        <h3 class="font-italic" style="text-align:center;">Featured article</h3>
+        <img class="card-img-top img-responsive" src="https://slack-files2.s3-us-west-2.amazonaws.com/avatars/2016-07-07/57802419554_47decd25da0b63135665_512.png" alt="Card image cap" style="height:120px; width:120px;">
+        <div class="card-body">
+            <p> {{ featured.content | truncatechars:100 }} </p>
+            <a href="{% url 'hc-read_blog' pk=featured.id %}" class="btn btn-primary">Read more</a>
+        </div>
+    </div>
+</main> -->
 
 
 <script
   src="http://code.jquery.com/jquery-1.12.4.min.js"
   integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
   crossorigin="anonymous"></script>
-
 <script>
 
     $(function(){

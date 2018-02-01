@@ -13,6 +13,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
+from django.forms.models import model_to_dict
 from django.utils.six.moves.urllib.parse import urlencode
 from hc.api.decorators import uuid_or_400
 from hc.api.models import DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check, Ping
@@ -79,17 +80,15 @@ def create_blog(request):
 def read_blog(request, pk):
     comment_form = CreateCommentForm(request.POST)
     blog = Blog_post.objects.get(pk=pk)
-    # featured = Blog_post.objects.get(pk=1)
+    featured = Blog_post.objects.get(pk=pk)
     comments = Comment.objects.filter(blog = blog.id)
     url = f"http://localhost:8000/blog/read_blog/{pk}"
     ctx = {
         "blog": blog,
-        # 'featured':featured,
+        'featured':featured,
         'tweet_url':url,
         'comments':comments
     }
-    print (blog.id)
-    print ("000000")
     if "add_comment" in request.POST:
         if comment_form.is_valid():
             posted_comment = request.POST['comment']
@@ -99,21 +98,37 @@ def read_blog(request, pk):
             return redirect(read_blog, pk=blog.id)
     return render(request, "front/readblog.html", ctx )
 
-def home(request):
-    return redirect(blogs)
-
-
-def edit_blog(request,pk):
-    pass
 
 def delete_blog(request, pk):
-    if "delete" in request.POST:
-        blog = Blog_post.objects.get(pk=pk)
-        blog.delete()
-        messages.info(request, "Blog deleted!")
-        return redirect(read_blog)
+    Blog_post.objects.get(pk=pk).delete()
+    return redirect(blogs, filter_by=0)
 
 
+def edit_blog(request, pk):
+    blog =  Blog_post.objects.get(pk=pk)
+    category = blog.category
+    categories = Category.objects.all()
+    if request.method == 'POST':
+        form = Blog_post(request.POST, instance=blog)
+        category_form = Category(request.POST, instance=category)
+        if "create_blog" in request.POST:
+            if form.is_valid():
+                form.category = request.POST['category_name']
+                form.title = request.POST['title']
+                form.content = request.POST['content']
+                form.publish = timezone.now()
+                form.save()
+                return redirect(read_blog, pk)
+    else:
+        form = Blog_post()
+        category_form = Category()
+        ctx = {
+        'categories':categories,
+        'form':form,
+        'category_form':category_form
+    }
+        return render(request, "front/create_blog.html", ctx )
+        
 @login_required
 def my_checks(request):
     q = Check.objects.filter(user=request.team.user).order_by("created")
