@@ -17,6 +17,7 @@ from hc.api.decorators import uuid_or_400
 from hc.api.models import DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check, Ping
 from hc.front.forms import (AddChannelForm, AddWebhookForm, NameTagsForm,
                             TimeoutForm)
+from .models import Faq, Tutorial
 
 
 # from itertools recipes:
@@ -122,6 +123,42 @@ def docs_api(request):
     }
 
     return render(request, "front/docs_api.html", ctx)
+
+def docs_faq(request):
+    """
+    Renders the faq page
+    """
+    all_faqs = Faq.objects.all()
+    faqs = list(all_faqs)
+    
+    ctx = {
+        "page": "docs",
+        "section": "faq",
+        "SITE_ROOT": settings.SITE_ROOT,
+        "PING_ENDPOINT": settings.PING_ENDPOINT,
+        "faqs": faqs
+    }
+
+    return render(request, "front/docs_faq.html", ctx)
+
+
+def docs_getting_started(request):
+    """
+    Renders the getting started page
+    """
+    all_tutorials = Tutorial.objects.all()
+    tutorials = list(all_tutorials)
+    # get tutorial titles
+    all_tutorial_titles = Tutorial.objects.values_list('title', flat=True).all()
+    titles_list = list(all_tutorial_titles)
+    ctx = {
+        "page": "docs",
+        "section": "overview",
+        "tutorials": tutorials,
+        "titles": titles_list
+    }
+
+    return render(request, "front/docs_getting_started.html", ctx)
 
 
 def about(request):

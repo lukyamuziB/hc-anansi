@@ -30,6 +30,7 @@
     <link rel="stylesheet" href="{% static 'css/log.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/add_pushover.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/settings.css' %}" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Muli" rel="stylesheet">
     {% endcompress %}
 </head>
 <body class="page-{{ page }}">
@@ -170,5 +171,11 @@
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     {% endcompress %}
     {% endblock %}
+    <!-- Session user email for Live Chat ID -->
+    <script type="text/javascript">
+        var name = "{{ request.user.email }}"
+    </script>
+    <!-- olark widget -->
+    <script src="{% static 'js/olark.js' %}"></script>
 </body>
 </html>
