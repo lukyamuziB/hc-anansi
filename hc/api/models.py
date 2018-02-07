@@ -21,7 +21,7 @@ STATUSES = (
 )
 DEFAULT_TIMEOUT = td(days=1)
 DEFAULT_GRACE = td(hours=1)
-DEFAULT_NAG = td(hours=3)
+DEFAULT_NAG = td(hours=1)
 CHANNEL_KINDS = (("email", "Email"), ("webhook", "Webhook"),
                  ("hipchat", "HipChat"),
                  ("slack", "Slack"), ("pd", "PagerDuty"), ("po", "Pushover"),
@@ -49,6 +49,8 @@ class Check(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     timeout = models.DurationField(default=DEFAULT_TIMEOUT)
     grace = models.DurationField(default=DEFAULT_GRACE)
+    priority = models.IntegerField(default=0)
+    escalation_email = models.CharField(blank=True, null=True, max_length=140)
     nag = models.DurationField(default=DEFAULT_NAG)
     nag_status = models.BooleanField(default=False)
     n_pings = models.IntegerField(default=0)
@@ -82,6 +84,23 @@ class Check(models.Model):
             error = channel.notify(self)
             if error not in ("", "no-op"):
                 errors.append((channel, error))
+
+        return errors
+
+    def send_escalation_alert(self, escalation_email):
+        if self.status not in ("up", "down"):
+            raise NotImplementedError("Unexpected status: %s" % self.status)
+
+        errors = []
+        # verify escalation email is verified
+
+        verified = Channel.objects.filter(value=escalation_email,
+                                          email_verified=True).first()
+
+        if verified:
+            error = verified.notify(self)
+            if error not in ("", "no-op"):
+                errors.append((verified, error))
 
         return errors
 

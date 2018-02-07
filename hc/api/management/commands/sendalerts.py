@@ -47,20 +47,43 @@ class Command(BaseCommand):
         if check.status == "down":
             check.nag_after = timezone.now() + check.nag
             check.nag_status = True
-            
+
         check.save()
 
-        tmpl = "\nSending alert, status=%s, code=%s\n"
-        self.stdout.write(tmpl % (check.status, check.code))
-        errors = check.send_alert()
-        for ch, error in errors:
-            self.stdout.write("ERROR: %s %s %s\n" % (ch.kind, ch.value, error))
+        if not (check.status == "down" and check.priority > 0 and
+                check.escalation_email):
+            print("Email not escalated")
+            tmpl = "Sending normal alert, status={}, code={}"
+            print(tmpl.format(check.status, check.code))
+            errors = check.send_alert()
+            for ch, error in errors:
+                print(("ERROR: {} {} {}").format(ch.kind, ch.value, error))
+            connection.close()
+            return True
+        else:
 
-        connection.close()
-        return True
+            tmpl = "Sending escalation alert, status={}, code={}"
+            print(tmpl.format(check.status, check.code))
+            errors = check.send_escalation_alert(check.escalation_email)
+            for ch, error in errors:
+                print("ERROR: {} {} {}".format('email',
+                                                 check.escalation_email, error))
+
+            connection.close()
+            print("Email notification escalated")
+
+            tmpl = "Sending normal alert, status={}, code={}"
+            print(tmpl.format(check.status, check.code))
+            errors = check.send_alert()
+            for ch, error in errors:
+                print(("ERROR: {} {} {}").format(ch.kind,
+                                                 ch.value, error))
+
+            connection.close()
+            return True
 
     def handle(self, *args, **options):
-        self.stdout.write("sendalerts is now running")
+        print("sendalerts is now running")
 
         ticks = 0
         while True:
@@ -72,4 +95,4 @@ class Command(BaseCommand):
             time.sleep(1)
             if ticks % 60 == 0:
                 formatted = timezone.now().isoformat()
-                self.stdout.write("-- MARK %s --" % formatted)
+                print("-- MARK %s --" % formatted)

@@ -135,6 +135,54 @@
     </div>
 </div>
 
+<div id="set-priority-modal" class="modal">
+    <div class="modal-dialog">
+        <form id="set-priority-form" method="post" action="">
+            {% csrf_token %}
+            <input type="hidden" name="priority" id="check-priority" />
+
+            <div class="modal-content">
+                <div class="priority-modal-title">
+                    Set Check Priority and Escalation Email
+                </div>
+                <div class="modal-body">
+                    <div class="update-timeout-info text-center">
+                        <span class="update-timeout-label">
+                            Priority
+                        </span>
+                        <span id="priority-slider-value" class="update-priority-value">
+                            1
+                        </span>
+                    </div>
+
+                    <div id="priority-slider"></div>
+                    <div class="escalation">
+                        <select class="escalation-select" id="escalation-select" name="escalation_email">
+                            <option id="default-email" value="">select email</option>
+                            {% for channel in channels %}
+                            <option value="{{channel.value}}">
+                                {{channel.value}}
+                                {% if not channel.email_verified %}
+                                    <span class="channel-unconfirmed">(unconfirmed)</span>
+                                {% endif %}
+                            </option>
+                            {% endfor %}
+
+
+                        </select>
+                        <!-- <input type="text" data-role="tagsinput" name="escalation_emails" id="escalation-emails" placeholder="Emails (Separated by commas)"> -->
+                        <button type="submit" id="escalate" class="btn btn-primary">Save</button>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div id="remove-check-modal" class="modal">
     <div class="modal-dialog">
         <form id="remove-check-form" method="post">

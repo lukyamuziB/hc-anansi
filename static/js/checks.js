@@ -135,6 +135,8 @@ $(function() {
         $("#update-timeout-nag").val(rounded);
     });
 
+
+
     $('[data-toggle="tooltip"]').tooltip();
 
     $(".my-checks-name").click(function() {
@@ -214,12 +216,12 @@ $(function() {
 
         function applyFilters(index, element) {
             var tags = $(".my-checks-name", element).data("tags").split(" ");
-            $.each(checked, function(key, value) {
-                if (key == -1) {
+            for (var i = 0, tag; tag = checked[i]; i++) {
+                if (tags.indexOf(tag) == -1) {
                     $(element).hide();
                     return;
                 }
-            });
+            }
 
             $(element).show();
         }
@@ -257,7 +259,7 @@ $(function() {
                     $(element).hide();
                     return;
                 }
-            }
+            });
 
             $(element).show();
         }
@@ -273,6 +275,49 @@ $(function() {
         var url = e.target.getAttribute("data-url");
         $("#pause-form").attr("action", url).submit();
         return false;
+    });
+    // Shows set priority modal
+    $(".check-priority").click(function(e) {
+
+        var $this = $(this);
+        var a = e.target;
+
+        var priority = a.getAttribute("data-priority");
+        var emails = a.getAttribute("data-escal-emails");
+
+
+
+        $("#check-priority").val(priority);
+        $("#default-email").val(emails).attr("selected", "true");
+        $("#default-email").html(emails);
+        prioritySlider.noUiSlider.set(priority);
+
+        $("#set-priority-modal").modal({ "show": true, "backdrop": "static" });
+        return false
+    });
+
+    // Priority slider
+    var prioritySlider = document.getElementById("priority-slider");
+    noUiSlider.create(prioritySlider, {
+        start: [0],
+        step: 1,
+        connect: 'lower',
+        range: {
+            'min': -2,
+            'max': 2
+        },
+        pips: {
+            mode: 'values',
+            values: [-2, -1, 0, 1, 2],
+            density: 15
+        }
+
+    });
+
+    prioritySlider.noUiSlider.on("update", function(a, b, value) {
+        var rounded = Math.round(value);
+        $("#priority-slider-value").text(rounded);
+        $("#check-priority").val(rounded);
     });
 
 
@@ -304,9 +349,7 @@ $(function() {
     clipboard.on('error', function(e) {
         var text = e.trigger.getAttribute("data-clipboard-text");
         prompt("Press Ctrl+C to select:", text);
-    }); 
-});
+    });
 
-$('#myModal').on('shown.bs.modal', function () {
-    $('#myInput').trigger('focus')
-  })
+
+});

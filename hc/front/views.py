@@ -18,7 +18,7 @@ from django.utils.six.moves.urllib.parse import urlencode
 from hc.api.decorators import uuid_or_400
 from hc.api.models import DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check, Ping
 from hc.front.forms import (AddChannelForm, AddWebhookForm, NameTagsForm,
-                            TimeoutForm)
+                            PriorityForm, TimeoutForm)
 from .models import Faq, Tutorial
 from .forms import CreateBlogPost, CreateCategory, CreateCommentForm
 from .models import Category, Blog_post, Comment
@@ -60,7 +60,7 @@ def create_blog(request):
                 ctg.save()
                 return redirect(create_blog)
         elif 'create_blog' in request.POST and form.is_valid():
-                title = request.POST['title'] 
+                title = request.POST['title']
                 blog = form.cleaned_data['content']
                 selected_category = request.POST['category_name']
                 category = Category.objects.get(name=selected_category)
@@ -136,10 +136,14 @@ def edit_blog(request, pk):
 
 @login_required
 def my_checks(request):
-    q = Check.objects.filter(user=request.team.user).order_by("created")
+    q = Check.objects.filter(user=request.team.user).order_by("-priority",
+                                                              "created")
     checks = list(q)
     # create a list of unresolved checks
     unresolved_checks = []
+    # add queryset of email channels to context
+    channels = Channel.objects.filter(user=request.team.user,
+                                      kind="email").order_by("created")
 
     counter = Counter()
     down_tags, grace_tags = set(), set()
@@ -162,6 +166,7 @@ def my_checks(request):
     ctx = {
         "page": "checks",
         "checks": checks,
+        "channels": channels,
         "now": timezone.now(),
         # pass unresolved checks list to context
         "unresolved_checks": unresolved_checks,
@@ -236,7 +241,7 @@ def docs_faq(request):
     """
     all_faqs = Faq.objects.all()
     faqs = list(all_faqs)
-    
+
     ctx = {
         "page": "docs",
         "section": "faq",
@@ -298,6 +303,24 @@ def update_name(request, code):
         check.tags = form.cleaned_data["tags"]
         check.save()
 
+    return redirect("hc-checks")
+
+
+@login_required
+@uuid_or_400
+def update_priority(request, code):
+    """Receives the check priority form and saves check priority to db"""
+    assert request.method == 'POST'
+
+    check = get_object_or_404(Check, code=code)
+    if check.user != request.team.user:
+        return HttpResponseForbidden()
+
+    form = PriorityForm(request.POST)
+    if form.is_valid():
+        check.priority = form.cleaned_data["priority"]
+        check.escalation_email = form.cleaned_data["escalation_email"]
+        check.save()
     return redirect("hc-checks")
 
 

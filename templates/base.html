@@ -1,5 +1,6 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <title>{% block title %}healthchecks.io - Monitor Cron Jobs. Get Notified When Your Cron Jobs Fail{% endblock %}</title>
@@ -12,7 +13,7 @@
     {% load compress staticfiles %}
     <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
 
-   
+
     {% compress css %}
     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/icomoon.css' %}" type="text/css">
@@ -35,25 +36,18 @@
     <link rel="stylesheet" href="{% static 'css/blog.css' %}" type="text/css">
     {% endcompress %}
 </head>
+
 <body class="page-{{ page }}">
     <nav class="navbar navbar-default">
         <div class="container">
-        <div class="navbar-header">
-            <button
-                type="button"
-                class="navbar-toggle collapsed"
-                data-toggle="collapse"
-                data-target="#navbar"
-                aria-expanded="false"
-                aria-controls="navbar">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand"
-                href="{% url 'hc-index' %}"
-                title="healthchecks.io - Monitor Cron Jobs">
+                <a class="navbar-brand" href="{% url 'hc-index' %}" title="healthchecks.io - Monitor Cron Jobs">
                 {% if request.user.is_authenticated %}
                 <img
                     id="logo"
@@ -73,82 +67,93 @@
                 {% endif %}
             </a>
 
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-            <ul id="nav-main-sections" class="nav navbar-nav">
-                {% if request.user.is_authenticated %}
-                    <li {% if page == 'checks' %} class="active" {% endif %}>
-                        <a href="{% url 'hc-checks' %}">Checks</a>
-                    </li>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul id="nav-main-sections" class="nav navbar-nav">
+                    {% if request.user.is_authenticated %} {% if page == 'checks' %}
+                    <li class="active">
+                        {% else %}
+                        <li>
+                            {% endif %}
+                            <a href="{% url 'hc-checks' %}">Checks</a>
+                        </li>
+                        {% if page == 'channels' %}
+                        <li class="active">
+                            {% else %}
+                            <li>
+                                {% endif %}
+                                <a href="{% url 'hc-channels' %}">Integrations</a>
+                            </li>
 
-                    <li {% if page == 'channels' %} class="active" {% endif %}>
-                        <a href="{% url 'hc-channels' %}">Integrations</a>
-                    </li>
+                            {% endif %} {% if show_pricing %} {% if page == 'pricing' %}
+                            <li class="active">
+                                {% else %}
+                                <li>
+                                    {% endif %}
 
-                {% endif %}
+                                    <a href="{% url 'hc-pricing' %}">Pricing</a>
+                                </li>
+                                {% endif %} {% if page == 'docs' %}
+                                <li class="active">
+                                    {% else %}
+                                    <li>
+                                        {% endif %}
 
 
-                {% if show_pricing %}
-                <li {% if page == 'pricing' %} class="active" {% endif %}>
-                    <a href="{% url 'hc-pricing' %}">Pricing</a>
-                </li>
-                {% endif %}
+                                        <a href="{% url 'hc-docs' %}">Docs</a>
+                                    </li>
+                                    {% if page == 'about' %}
+                                    <li class="active">
+                                        {% else %}
+                                        <li>
+                                            {% endif %}
 
-                <li {% if page == 'docs' %} class="active" {% endif %}>
-                    <a href="{% url 'hc-docs' %}">Docs</a>
-                </li>
-
-                <li {% if page == 'about' %} class="active" {% endif %}>
-                    <a href="{% url 'hc-about' %}">About</a>
-                </li>
-                <li {% if page == 'blog' %} class="active" {% endif %}>
+                                            <a href="{% url 'hc-about' %}">About</a>
+                                        </li>
+                                        <li {% if page == 'blog' %} class="active" {% endif %}>
                     <a href="{% url 'hc-blog' filter_by=0%}">Blog</a>
                 </li>
-            </ul>
+                </ul>
 
 
-            {% if request.user.is_authenticated %}
-            {% else %}
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="{% url 'hc-login' %}">Log In</a></li>
-            </ul>
-            {% endif %}
-
-            {% if request.user.is_authenticated %}
-            <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown">
-                    <a id="nav-email" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                {% if request.user.is_authenticated %} {% else %}
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="{% url 'hc-login' %}">Log In</a></li>
+                </ul>
+                {% endif %} {% if request.user.is_authenticated %}
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a id="nav-email" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
                         {{ request.team }} <span class="caret"></span>
                     </a>
-                    <ul class="dropdown-menu">
-                        {% if request.teams %}
-                        <li class="dropdown-header">{{ request.user.profile }}</li>
-                        <li>
-                            <a href="{% url 'hc-switch-team' request.user.username %}" class="active">Checks</a>
-                        </li>
-                        {% endif %}
+                        <ul class="dropdown-menu">
+                            {% if request.teams %}
+                            <li class="dropdown-header">{{ request.user.profile }}</li>
+                            <li>
+                                <a href="{% url 'hc-switch-team' request.user.username %}" class="active">Checks</a>
+                            </li>
+                            {% endif %}
 
-                        <li><a href="{% url 'hc-profile' %}">Account Settings</a></li>
-                        <li role="separator" class="divider"></li>
+                            <li><a href="{% url 'hc-profile' %}">Account Settings</a></li>
+                            <li role="separator" class="divider"></li>
 
-                        {% for team in request.teams %}
-                        <li class="dropdown-header">{{ team }}</li>
-                        <li>
-                            <a href="{% url 'hc-switch-team' team.user.username %}">Checks</a>
-                        </li>
-                        <li role="separator" class="divider"></li>
-                        {% endfor %}
+                            {% for team in request.teams %}
+                            <li class="dropdown-header">{{ team }}</li>
+                            <li>
+                                <a href="{% url 'hc-switch-team' team.user.username %}">Checks</a>
+                            </li>
+                            <li role="separator" class="divider"></li>
+                            {% endfor %}
 
-                        <li><a href="{% url 'hc-logout' %}">Log Out</a></li>
-                    </ul>
-                </li>
-            </ul>
-            {% endif %}
-        </div>
+                            <li><a href="{% url 'hc-logout' %}">Log Out</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                {% endif %}
+            </div>
 
         </div>
     </nav>
-
     {% block containers %}
     <div class="container">
         {% block content %}{% endblock %}
@@ -170,8 +175,7 @@
     </footer>
 
 
-    {% block scripts %}
-    {% compress js %}
+    {% block scripts %} {% compress js %}
     <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="https://getbootstrap.com/assets/js/vendor/holder.min.js"></script>
@@ -179,7 +183,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.12/marked.min.js"></script>
     <script src="https://getbootstrap.com/assets/js/vendor/holder.min.js"></script>
     <script src="https://getbootstrap.com/assets/js/vendor/popper.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.12/marked.min.js"></script>
     {% endcompress %}
     {% endblock %}
     <!-- Session user email for Live Chat ID -->
@@ -188,6 +191,7 @@
     </script>
     <!-- olark widget -->
     <script src="{% static 'js/olark.js' %}"></script>
+
 </body>
 </html>
 

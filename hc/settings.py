@@ -19,11 +19,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HOST = "localhost"
 SECRET_KEY = "---"
 DEBUG = True
+
 ALLOWED_HOSTS = ['0.0.0.0', 'localhost', 'hc-anansi-staging.herokuapp.com',
                  'hc-anansi-production.herokuapp.com',
                  'hc-ibutiti.herokuapp.com',
                  'hc-anansi-blog.herokuapp.com',
                  '127.0.0.1']
+
 DEFAULT_FROM_EMAIL = 'hc-anansi@null.net'
 USE_PAYMENTS = False
 
@@ -151,7 +153,7 @@ COMPRESS_OFFLINE = True
 
 DJMAIL_REAL_BACKEND = "djmail.backends.async.EmailBackend"
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST = os.environ.get("EMAIL_HOST")
 EMAIL_HOST_PORT = 587
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
