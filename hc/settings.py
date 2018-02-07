@@ -21,7 +21,10 @@ SECRET_KEY = "---"
 DEBUG = True
 ALLOWED_HOSTS = ['0.0.0.0', 'localhost', 'hc-anansi-staging.herokuapp.com',
                  'hc-anansi-production.herokuapp.com',
-                 'hc-ibutiti.herokuapp.com']
+                 'hc-ibutiti.herokuapp.com',
+                 'hc-anansi-blog.herokuapp.com',
+                 '127.0.0.1']
+DEFAULT_FROM_EMAIL = 'hc-anansi@null.net'
 USE_PAYMENTS = False
 
 
@@ -35,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'compressor',
     'djmail',
+    'pagedown',
 
     'hc.accounts',
     'hc.api',
